@@ -1,0 +1,72 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+    <script type="text/javascript">
+
+        rightAnswers = []
+        chosenAnswers = []
+        score = 0
+
+        @foreach (var item in Model.Question) {
+            @:rightAnswers.push("@item.RightAnswer");
+        }
+
+    
+        function checkAnswer() {
+
+            var count = 0;
+            score = 0;
+            document.getElementById("result").innerHTML = "";
+            var ele = document.getElementsByTagName('input');
+
+            for (i = 0; i < ele.length; i++) {
+                if (ele[i].type = "radio") {
+                    if (ele[i].checked) {
+                        chosenAnswers.push(ele[i].value);
+                    }
+                }
+            }
+            document.getElementById("subButton").setAttribute("hidden", true);
+            document.getElementById("restartButton").removeAttribute("hidden");
+            computeScore();
+        }
+
+        function computeScore() {
+            for (i = 0; i < rightAnswers.length; i++) {
+                for (i = 0; i < chosenAnswers.length; i++) {
+                    if (rightAnswers[i] == chosenAnswers[i]) {
+                        score += 1;
+                    }
+                }
+            }
+            showResults();
+        }
+
+        function showResults() {
+            document.getElementById("result").innerHTML += "<b>Your answers:</b> " + chosenAnswers + ". <br>"
+                + "<b>Number of correct answers:</b> " + score + "<br>"
+                + "<b>Correct answers:</b> " + rightAnswers + ".";
+        }
+    </script>
+
+    <div class="text-center">
+        <h1>Quiz</h1>
+        <form>
+            @foreach (var item in Model.Question)
+            {
+                var name = item.Quest;
+                <p><b>@Html.DisplayFor(modelItem => item.Quest)</b></p>
+                <input type="radio" name="@name" value="@Html.DisplayFor(modelItem => item.alt1)" checked> @Html.DisplayFor(modelItem => item.alt1) <br>
+                <input type="radio" name="@name" value="@Html.DisplayFor(modelItem => item.alt2)"> @Html.DisplayFor(modelItem => item.alt2) <br>
+                <input type="radio" name="@name" value="@Html.DisplayFor(modelItem => item.alt3)"> @Html.DisplayFor(modelItem => item.alt3) <br>
+                <br>
+            }
+            <input id="subButton" type="submit" value="Check Answers" onclick=checkAnswer() ; />
+        </form>
+
+        <div id="result"></div>
+        <a id="restartButton" asp-area="" asp-page="/Index" hidden>Try again</a>
+    </div>
